@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
 participant browser
 participant server
@@ -27,3 +28,4 @@ participant server
     deactivate server
 
     Note right of browser: El navegador renderiza las notas sin recargar la página
+```
