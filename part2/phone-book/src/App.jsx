@@ -2,19 +2,17 @@ import { useEffect, useState } from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
-import axios from "axios";
+import personServices from "./services/person";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("juan");
-  const [number, setNewNumber] = useState("");
+  const [number, setNumber] = useState("");
   const [showAll, setShowAll] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((res) => {
-      const response = res.data;
-      console.log(response);
-      setPersons(response);
+    personServices.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -22,21 +20,26 @@ const App = () => {
     e.preventDefault();
     const newPersonObj = {
       name: newName,
-      id: persons.length + 1,
       tel: number,
     };
 
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
-    } else {
-      setPersons(persons.concat(newPersonObj));
-      setNewName("");
-      setNewNumber("");
+      return;
     }
+    personServices
+      .create(newPersonObj)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNumber("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
   const filteredPersons = persons.filter((person) =>
-    person.name.toLowerCase().includes(showAll.toLowerCase())
+    person.name?.toLowerCase().includes(showAll.toLowerCase() || "")
   );
 
   const handleFilter = (event) => {
@@ -48,7 +51,7 @@ const App = () => {
   };
 
   const handleNumberChange = (e) => {
-    setNewNumber(e.target.value);
+    setNumber(e.target.value);
   };
 
   return (
