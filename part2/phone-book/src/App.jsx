@@ -18,15 +18,45 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // si la persona existe modificar el numero si o no
+    const existingPerson = persons.find(
+      (p) => p.name.toLowerCase() === newName.toLowerCase()
+    );
+
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook. Do you want to update the number?`
+        )
+      ) {
+        const updatedPerson = { ...existingPerson, tel: number };
+
+        personServices
+          .update(existingPerson.id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((p) =>
+                p.id !== existingPerson.id ? p : returnedPerson
+              )
+            );
+            setNewName("");
+            setNumber("");
+          })
+          .catch((error) => {
+            console.error("Error updating number:", error);
+            alert("There was an error updating the contact.");
+          });
+      }
+      return;
+    }
+
+    // añadir
+
     const newPersonObj = {
       name: newName,
       tel: number,
     };
-
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
-      return;
-    }
     personServices
       .create(newPersonObj)
       .then((returnedPerson) => {
@@ -38,6 +68,19 @@ const App = () => {
         console.log(error);
       });
   };
+
+  const handleDelete = (id) => {
+    const personToDelete = persons.find((p) => p.id === id);
+
+    if (
+      window.confirm(`Are you sure you want to delete ${personToDelete.name}?`)
+    ) {
+      personServices.remove(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
+
   const filteredPersons = persons.filter((person) =>
     person.name?.toLowerCase().includes(showAll.toLowerCase() || "")
   );
@@ -67,7 +110,7 @@ const App = () => {
         number={number}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} />
     </div>
   );
 };
