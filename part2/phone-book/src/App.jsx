@@ -3,12 +3,15 @@ import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
 import personServices from "./services/person";
+import Notification from "./components/Notification";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("juan");
   const [number, setNumber] = useState("");
   const [showAll, setShowAll] = useState("");
+  const [message, setMessage] = useState("added juan");
 
   useEffect(() => {
     personServices.getAll().then((initialPersons) => {
@@ -46,6 +49,10 @@ const App = () => {
           .catch((error) => {
             console.error("Error updating number:", error);
             alert("There was an error updating the contact.");
+
+            setMessage(
+              `information of ${newName} has already been removed from server`
+            );
           });
       }
       return;
@@ -63,6 +70,7 @@ const App = () => {
         setPersons(persons.concat(returnedPerson));
         setNewName("");
         setNumber("");
+        setMessage(`added ${newName}`);
       })
       .catch((error) => {
         console.log(error);
@@ -100,6 +108,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter searchTerm={showAll} handleFilter={handleFilter} />
       <h3>add a new</h3>
       <PersonForm
