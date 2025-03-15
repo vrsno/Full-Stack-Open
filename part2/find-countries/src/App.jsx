@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Form } from "../components/Form";
+import { Countries } from "../components/countries";
 
 function App() {
   const [country, setCountry] = useState("");
@@ -18,7 +20,6 @@ function App() {
         const response = await axios.get(
           `https://studies.cs.helsinki.fi/restcountries/api/all`
         );
-        console.log(response.data);
 
         const filteredCountries = response.data.filter((c) =>
           c.name.common.toLowerCase().includes(country.toLowerCase())
@@ -51,39 +52,11 @@ function App() {
 
   return (
     <>
-      <div>
-        <p>Find country</p>
-        <input type="text" value={country} onChange={handleCountryChange} />
-      </div>
+      <Form country={country} handleCountryChange={handleCountryChange} />
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {countries.length === 1 ? (
-        <div>
-          <h2>{countries[0].name.common}</h2>
-          <p>Capital: {countries[0].capital}</p>
-          <p>Area: {countries[0].area}</p>
-          <h2>Languages:</h2>
-          <ul>
-            {countries[0].languages &&
-              Object.values(countries[0].languages).map((lang, index) => (
-                <li key={index}>{lang}</li>
-              ))}
-          </ul>
-
-          <img
-            src={countries[0].flags.svg}
-            alt={`Flag of ${countries[0].name.common}`}
-            width="150"
-          />
-        </div>
-      ) : (
-        <ul>
-          {countries.map((c) => (
-            <li key={c.name.common}>{c.name.common}</li>
-          ))}
-        </ul>
-      )}
+      <Countries countries={countries} />
     </>
   );
 }
