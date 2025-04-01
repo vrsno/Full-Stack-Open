@@ -33,7 +33,7 @@ const App = () => {
           `${newName} is already in the phonebook. Do you want to update the number?`
         )
       ) {
-        const updatedPerson = { ...existingPerson, tel: number };
+        const updatedPerson = { ...existingPerson, phone: number };
 
         personServices
           .update(existingPerson.id, updatedPerson)
@@ -62,7 +62,7 @@ const App = () => {
 
     const newPersonObj = {
       name: newName,
-      tel: number,
+      phone: number,
     };
     personServices
       .create(newPersonObj)
