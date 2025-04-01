@@ -4,7 +4,7 @@ export const Persons = ({ filteredPersons, handleDelete }) => {
       {filteredPersons.map((person) => (
         <p key={person.id}>
           {person.name}
-          {""} {person.tel}
+          {""} {person.phone}
           <button onClick={() => handleDelete(person.id)}>Delete</button>
         </p>
       ))}
