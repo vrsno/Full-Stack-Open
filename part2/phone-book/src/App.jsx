@@ -14,9 +14,14 @@ const App = () => {
   const [message, setMessage] = useState("added juan");
 
   useEffect(() => {
-    personServices.getAll().then((initialPersons) => {
-      setPersons(initialPersons);
-    });
+    personServices
+      .getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+      })
+      .catch((error) => {
+        console.log(error.response.data.error);
+      });
   }, []);
 
   const handleSubmit = (e) => {
@@ -73,7 +78,7 @@ const App = () => {
         setMessage(`added ${newName}`);
       })
       .catch((error) => {
-        console.log(error);
+        setMessage(error.response.data.error);
       });
   };
 
